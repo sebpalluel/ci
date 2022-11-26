@@ -64,7 +64,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: create env file ${{ inputs.env_file }} from ENV_FILE secrets if it exists
-        if: $ENV_FILE
+        if: env.ENV_FILE
         run: |
           echo $ENV_FILE > ${{ inputs.env_file }}
 

@@ -112,7 +112,7 @@ jobs:
           main-branch-name: ${{ inputs.main-branch-name }}
 
       - name: create env file ${{ inputs.env_file }} from ENV_FILE secrets if it exists
-        if: $ENV_FILE
+        if: env.ENV_FILE
         run: |
           echo $ENV_FILE > ${{ inputs.env_file }}
 
