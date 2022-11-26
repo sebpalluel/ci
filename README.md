@@ -141,10 +141,6 @@ jobs:
     environment-variables: |
       ""
 
-    # [OPTIONAL] A multi-line string containing secret environment variables
-    environment-secrets: |
-      ""
-
     # [OPTIONAL] A multi-line string representing any bash commands (separated by new lines) which should
     # run sequentially, directly on the main job BEFORE executing any of the parallel commands which
     # may be specified via parallel-commands and/or parallel-commands-on-agents
@@ -247,10 +243,6 @@ jobs:
     # NOTE: Environment variables cannot contain values derived from ${{ secrets }}
     # because of how reusable workflows work
     environment-variables: |
-      ""
-
-     # [OPTIONAL] A multi-line string containing secret environment variables
-    environment-secrets: |
       ""
 
     # [OPTIONAL] A multi-line string representing any bash commands (separated by new lines) which should

@@ -2,10 +2,18 @@ name: Nx Cloud Agents
 
 on:
   workflow_call:
+    secrets:
+      ENV_FILE:
+        required: false
     inputs:
       number-of-agents:
         required: true
         type: number
+      env_file:
+        type: string
+        description: env file name where your secrets are going to be stored
+        required: false
+        default: .env
       node-version:
         required: false
         type: string
@@ -22,9 +30,6 @@ on:
         required: false
         type: string
       init-commands:
-        required: false
-        type: string
-      environment-secrets:
         required: false
         type: string
 
@@ -56,6 +61,11 @@ jobs:
           - ${{fromJson(needs.set-agents.outputs.matrix)}}
     steps:
       - uses: actions/checkout@v2
+
+      - name: create env file ${{ inputs.env_file }} from ENV_FILE secrets if it exists
+        if: ${{ secrets.ENV_FILE }}
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > ${{ inputs.env_file }}
 
       - name: Detect package manager
         id: package_manager
