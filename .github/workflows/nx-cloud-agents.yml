@@ -71,7 +71,7 @@ jobs:
       - name: create env file ${{ inputs.env_file }} from ENV_FILE secrets if it exists
         if: env.ENV_FILE
         run: |
-          echo $ENV_FILE > ${{ inputs.env_file }}
+          echo $ENV_FILE | base64 -d > ${{ inputs.env_file }}
 
       - name: Detect package manager
         id: package_manager
