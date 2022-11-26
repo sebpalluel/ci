@@ -24,6 +24,9 @@ on:
       init-commands:
         required: false
         type: string
+      environment-secrets:
+        required: false
+        type: string
 
 env:
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
