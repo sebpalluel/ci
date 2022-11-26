@@ -76,6 +76,7 @@ env:
   NX_BRANCH: ${{ github.event.number || github.ref_name }}
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
+  ENV_FILE: ${{ secrets.ENV_FILE }}
 
 jobs:
   main:
@@ -111,9 +112,9 @@ jobs:
           main-branch-name: ${{ inputs.main-branch-name }}
 
       - name: create env file ${{ inputs.env_file }} from ENV_FILE secrets if it exists
-        if: ${{ secrets.ENV_FILE }}
+        if: $ENV_FILE
         run: |
-          echo "${{ secrets.ENV_FILE }}" > ${{ inputs.env_file }}
+          echo $ENV_FILE > ${{ inputs.env_file }}
 
       - name: Detect package manager
         id: package_manager
