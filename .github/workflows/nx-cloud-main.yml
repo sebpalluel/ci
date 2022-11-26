@@ -13,6 +13,10 @@ on:
       number-of-agents:
         required: false
         type: number
+      environment:
+        type: string
+        description: environment to deploy to
+        required: true
       env_file:
         type: string
         description: env file name where your secrets are going to be stored
@@ -81,6 +85,7 @@ env:
 jobs:
   main:
     runs-on: ${{ inputs.runs-on }}
+    environment: ${{ inputs.environment }}
     # The name of the job which will invoke this one is expected to be "Nx Cloud - Main Job", and whatever we call this will be appended
     # to that one after a forward slash, so we keep this one intentionally short to produce "Nx Cloud - Main Job / Run" in the Github UI
     name: Run

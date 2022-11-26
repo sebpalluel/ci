@@ -9,6 +9,10 @@ on:
       number-of-agents:
         required: true
         type: number
+      environment:
+        type: string
+        description: environment to deploy to
+        required: true
       env_file:
         type: string
         description: env file name where your secrets are going to be stored
@@ -55,6 +59,7 @@ jobs:
   Run:
     needs: set-agents
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     name: Agent ${{ matrix.agent }}
     strategy:
       matrix:
