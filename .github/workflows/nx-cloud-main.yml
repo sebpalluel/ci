@@ -25,6 +25,10 @@ on:
       environment-variables:
         required: false
         type: string
+      cypress_cache_path:
+        required: false
+        default: cypress/cache
+        type: string
       init-commands:
         required: false
         type: string
@@ -173,6 +177,7 @@ jobs:
           echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
       - name: Use the node_modules cache if available [pnpm]
+        id: cache-node-modules-pnpm
         if: steps.package_manager.outputs.name == 'pnpm'
         uses: actions/cache@v3
         with:
@@ -249,6 +254,14 @@ jobs:
               appendFileSync(process.env.GITHUB_ENV, `${v.name}=${parseStr(v.value)}\n`);
             }
 
+      - name: Cache Cypress Binary for pnpm
+        id: cache-cypress-binary
+        if: steps.package_manager.outputs.name == 'pnpm'
+        uses: actions/cache@v3
+        with:
+          path: ${{ inputs.cypress_cache_path }}
+          key: cypress-binary-${{ hashFiles('**/pnpm-lock.yaml') }}
+
       - name: Run any configured install-commands
         if: ${{ inputs.install-commands != '' }}
         run: |
@@ -265,7 +278,7 @@ jobs:
               echo "Running yarn install --immutable"
               yarn install --immutable
             fi
-          elif [ "${{ steps.package_manager.outputs.name == 'pnpm' }}" == "true" ]; then
+          elif [ "${{ steps.package_manager.outputs.name == 'pnpm' }}" == "true" && "${{ steps.cache-node-modules-pnpm.outputs.cache-hit }}" == "false" ]; then
             echo "Running pnpm install"
             pnpm install
           else
