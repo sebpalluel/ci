@@ -147,23 +147,23 @@ jobs:
             ${{ runner.os }}-node-${{ steps.versions.outputs.node_version }}-yarn-
 
       - name: Install dependencies
+        if: ${{ inputs.install-commands == '' }}
         run: |
-          if [ -n "${{ inputs.install-command }}" ]; then
-            echo "Running custom install-command: ${{ inputs.install-command }}"
-            ${{ inputs.install-command }}
-          elif [ "${{ steps.package_manager.outputs.name == 'yarn' }}" == "true" ]; then
-            echo "Running yarn install --frozen-lockfile"
-            yarn install --frozen-lockfile
+          if [ "${{ steps.package_manager.outputs.name == 'yarn' }}" == "true" ]; then
+            if [ "${{ startsWith(steps.versions.outputs.yarn_version, '1.') }}" == "true" ]; then
+              echo "Running yarn install --frozen-lockfile"
+              yarn install --frozen-lockfile
+            else
+              echo "Running yarn install --immutable"
+              yarn install --immutable
+            fi
           elif [ "${{ steps.package_manager.outputs.name == 'pnpm' }}" == "true" ]; then
-                  if: 
             echo "Running pnpm install"
             pnpm install
           else
             echo "Running npm ci"
             npm ci
           fi
-      # The good thing about the multi-line string input for sequential commands is that we can simply forward it on as is to the bash shell and it will behave
-      # how we want it to in terms of quote escaping, variable assignment etc
       - name: Run any configured init-commands sequentially
         if: ${{ inputs.init-commands != '' }}
         shell: bash
