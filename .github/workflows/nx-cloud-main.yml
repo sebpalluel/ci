@@ -255,12 +255,14 @@ jobs:
             }
 
       - name: Cache Cypress Binary for pnpm
-        id: cache-cypress-binary
         if: steps.package_manager.outputs.name == 'pnpm'
+        id: cache-cypress-binary
         uses: actions/cache@v3
         with:
           path: ${{ inputs.cypress_cache_path }}
-          key: cypress-binary-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-cypress-binary-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}}-cypress-binary-
 
       - name: Run any configured install-commands
         if: ${{ inputs.install-commands != '' }}
@@ -278,9 +280,12 @@ jobs:
               echo "Running yarn install --immutable"
               yarn install --immutable
             fi
-          elif [ "${{ steps.package_manager.outputs.name == 'pnpm' }}" == "true" && "${{ steps.cache-node-modules-pnpm.outputs.cache-hit }}" == "false" ]; then
+          elif [ "${{ steps.package_manager.outputs.name == 'pnpm' }}" == "true" ]; then
             echo "Running pnpm install"
             pnpm install
+          else
+            echo "Running npm ci"
+            npm ci
           fi
 
       # An unfortunate side-effect of the way reusable workflows work is that by the time they are pulled into the "caller"

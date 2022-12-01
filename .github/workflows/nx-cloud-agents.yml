@@ -154,10 +154,13 @@ jobs:
           elif [ "${{ steps.package_manager.outputs.name == 'yarn' }}" == "true" ]; then
             echo "Running yarn install --frozen-lockfile"
             yarn install --frozen-lockfile
-          elif [ "${{ steps.package_manager.outputs.name == 'pnpm' }}" == "true" && "${{ steps.cache-node-modules-pnpm.outputs.cache-hit }}" == "false" ]; then
+          elif [ "${{ steps.package_manager.outputs.name == 'pnpm' }}" == "true" ]; then
                   if: 
             echo "Running pnpm install"
             pnpm install
+          else
+            echo "Running npm ci"
+            npm ci
           fi
       # The good thing about the multi-line string input for sequential commands is that we can simply forward it on as is to the bash shell and it will behave
       # how we want it to in terms of quote escaping, variable assignment etc
