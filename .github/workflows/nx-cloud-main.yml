@@ -281,9 +281,6 @@ jobs:
           elif [ "${{ steps.package_manager.outputs.name == 'pnpm' }}" == "true" && "${{ steps.cache-node-modules-pnpm.outputs.cache-hit }}" == "false" ]; then
             echo "Running pnpm install"
             pnpm install
-          else
-            echo "Running npm ci"
-            npm ci
           fi
 
       # An unfortunate side-effect of the way reusable workflows work is that by the time they are pulled into the "caller"
