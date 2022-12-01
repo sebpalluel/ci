@@ -165,14 +165,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-${{ steps.versions.outputs.node_version }}-
 
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        if: steps.package_manager.outputs.name == 'pnpm'
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
       - name: Use the node_modules cache if available [pnpm]
         if: steps.package_manager.outputs.name == 'pnpm'
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
-          path: ${{ pnpm store path }}
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
+
 
       - name: Get yarn cache directory path [yarn 1.x]
         if: steps.package_manager.outputs.name == 'yarn' && startsWith(steps.versions.outputs.yarn_version, '1.')
