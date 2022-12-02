@@ -153,17 +153,11 @@ jobs:
             if [ "${{ startsWith(steps.versions.outputs.yarn_version, '1.') }}" == "true" ]; then
               echo "Running yarn install --frozen-lockfile"
               yarn install --frozen-lockfile
-            else
-              echo "Running yarn install --immutable"
-              yarn install --immutable
             fi
           elif [ "${{ steps.package_manager.outputs.name == 'pnpm' }}" == "true" ]; then
-            if [ "${{ steps.cache-node-modules-pnpm.outputs.cache-hit }}" == "false" ]; then
-              echo "Running pnpm install"
-              pnpm install
-            else
-              echo "Bypassing pnpm install because cache hit"
-            fi
+            echo "Running pnpm install"
+            pnpm install
+          fi
           else
             echo "Running npm ci"
             npm ci

@@ -280,11 +280,8 @@ jobs:
               yarn install --immutable
             fi
           elif [ "${{ steps.package_manager.outputs.name == 'pnpm' }}" == "true" ]; then
-            if [ "${{ steps.cache-node-modules-pnpm.outputs.cache-hit }}" == "false" ]; then
               echo "Running pnpm install"
               pnpm install
-            else
-              echo "Bypassing pnpm install because cache hit"
             fi
           else
             echo "Running npm ci"
