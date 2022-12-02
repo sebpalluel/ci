@@ -282,7 +282,6 @@ jobs:
           elif [ "${{ steps.package_manager.outputs.name == 'pnpm' }}" == "true" ]; then
               echo "Running pnpm install"
               pnpm install
-            fi
           else
             echo "Running npm ci"
             npm ci
