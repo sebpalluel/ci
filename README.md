@@ -6,8 +6,9 @@ width="100%" alt="Nx - Smart, Extensible Build Framework"></p>
 ✨ Github Workflows for easily configuring distributed CI pipelines powered by the speed and intelligence of Nx Cloud.
 
 - [Example Usage](#example-usage)
-- [Configuration Options for the Main Job](#configuration-options-for-the-main-job-nx-cloud-mainyml)
-- [Configuration Options for the Agent Jobs](#configuration-options-for-agent-jobs-nx-cloud-agentsyml)
+- [Limited Secrets Support](#limited-secrets-support)
+- [Configuration Options for the Main Job (nx-cloud-main.yml)](#configuration-options-for-the-main-job-nx-cloud-mainyml)
+- [Configuration Options for Agent Jobs (nx-cloud-agents.yml)](#configuration-options-for-agent-jobs-nx-cloud-agentsyml)
 
 ## Disclaimer: Github Workflow Limitations
 
@@ -22,6 +23,8 @@ The extensibility of these Nx Cloud workflows is therefore strictly bound by the
 This means that you cannot do things such as embed additional Github actions within the workflow, or majorly customize the steps we have set up for you.
 
 If you find yourself needing to customize things beyond what is supported by Github reusable workflows, then the best way is to simply take a look at the source of the workflows within this repo [./.github/workflows](./.github/workflows) and use that as your starting point directly within your configs.
+
+> NOTE: Another really important limitation of these reusable Github workflows is that you are not allowed to pass data from the special `${{ secrets }}` namespace into the workflow you are invoking (i.e. `nrwl/ci`). If you find yourself needing to use secret values beyond the small number we have explicitly built support for, you will again need to use this project as inspiration, rather than using it directly.
 
 ## Example Usage
 
@@ -56,7 +59,7 @@ concurrency:
 jobs:
   main:
     name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11.1
+    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11
     with:
       parallel-commands: |
         npx nx workspace-lint
@@ -68,18 +71,20 @@ jobs:
 
   agents:
     name: Nx Cloud - Agents
-    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.1
+    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11
     with:
       number-of-agents: 3
 ```
 
 <!-- end example-usage -->
 
-## Adding read-write Nx Cloud access token to workflow
+## Limited Secrets Support
 
-The main and agent workflows both support passing `NX_CLOUD_AUTH_TOKEN` and `NX_CLOUD_ACCESS_TOKEN` from the parent workflow.
-These secrets are still kept encrypted and the `main` workflow will only use the `NX_CLOUD_AUTH_TOKEN` and `NX_CLOUD_ACCESS_TOKEN`
-if those are defined.
+As noted above, it is not possible to generically forward values from the special `${{ secrets }}` namespace into this workflow, because of the limitations of Github reusable workflows.
+
+Nevertheless, we have set up some explicit handling for the most common secret values that folks would need in the simple CI setups that this workflow is intended to support.
+
+For example, the main and agent workflows both support passing `NX_CLOUD_AUTH_TOKEN` and `NX_CLOUD_ACCESS_TOKEN` from the parent workflow. These secrets are still kept encrypted and the `main` workflow will only use the `NX_CLOUD_AUTH_TOKEN` and `NX_CLOUD_ACCESS_TOKEN` if those are defined.
 
 **.github/workflows/ci.yml**
 
@@ -101,7 +106,7 @@ concurrency:
 jobs:
   main:
     name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11.1
+    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11
     secrets:
       NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
       NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
@@ -109,12 +114,14 @@ jobs:
 
   agents:
     name: Nx Cloud - Agents
-    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.1
+    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11
     secrets:
       NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
       NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
     with: ...
 ```
+
+See the annotated configuration below for all explicitly supported secret values.
 
 <!-- end example-usage -->
 
@@ -123,7 +130,7 @@ jobs:
 <!-- start configuration-options-for-the-main-job -->
 
 ```yaml
-- uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11.1
+- uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11
   # [OPTIONAL] Explicitly supported secret values which can be passed into the workflow from your outer workflow run.
   #
   # NOTE: You cannot access values from ${{ secrets }} beyond what is explicitly specified here because of the limitations of reusable Github workflows
@@ -238,7 +245,7 @@ jobs:
 <!-- start configuration-options-for-agent-jobs -->
 
 ```yaml
-- uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.1
+- uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11
   # [OPTIONAL] Explicitly supported secret values which can be passed into the workflow from your outer workflow run.
   #
   # NOTE: You cannot access values from ${{ secrets }} beyond what is explicitly specified here because of the limitations of reusable Github workflows
