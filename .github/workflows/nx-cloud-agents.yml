@@ -36,6 +36,10 @@ on:
       init-commands:
         required: false
         type: string
+      runs-on:
+        required: false
+        type: string
+        default: ubuntu-latest
 
 env:
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
