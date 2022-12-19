@@ -43,7 +43,7 @@ env:
 
 jobs:
   set-agents:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     name: Init
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -58,7 +58,7 @@ jobs:
   # Intentionally using capital letter in order to make the Github UI for the matrix look better
   Run:
     needs: set-agents
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     environment: ${{ inputs.environment }}
     name: Agent ${{ matrix.agent }}
     strategy:
