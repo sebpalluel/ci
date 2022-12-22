@@ -56,7 +56,7 @@ concurrency:
 jobs:
   main:
     name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11.2
+    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11.1
     with:
       parallel-commands: |
         npx nx workspace-lint
@@ -68,7 +68,7 @@ jobs:
 
   agents:
     name: Nx Cloud - Agents
-    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.2
+    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.1
     with:
       number-of-agents: 3
 ```
@@ -101,7 +101,7 @@ concurrency:
 jobs:
   main:
     name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11.2
+    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11.1
     secrets:
       NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
       NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
@@ -109,7 +109,7 @@ jobs:
 
   agents:
     name: Nx Cloud - Agents
-    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.2
+    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.1
     secrets:
       NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
       NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
@@ -123,7 +123,7 @@ jobs:
 <!-- start configuration-options-for-the-main-job -->
 
 ```yaml
-- uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11.2
+- uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11.1
   # [OPTIONAL] Explicitly supported secret values which can be passed into the workflow from your outer workflow run.
   #
   # NOTE: You cannot access values from ${{ secrets }} beyond what is explicitly specified here because of the limitations of reusable Github workflows
@@ -238,7 +238,7 @@ jobs:
 <!-- start configuration-options-for-agent-jobs -->
 
 ```yaml
-- uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.2
+- uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.1
   # [OPTIONAL] Explicitly supported secret values which can be passed into the workflow from your outer workflow run.
   #
   # NOTE: You cannot access values from ${{ secrets }} beyond what is explicitly specified here because of the limitations of reusable Github workflows
