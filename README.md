@@ -56,7 +56,7 @@ concurrency:
 jobs:
   main:
     name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.9
+    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11.3
     with:
       parallel-commands: |
         npx nx workspace-lint
@@ -68,7 +68,7 @@ jobs:
 
   agents:
     name: Nx Cloud - Agents
-    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.9
+    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.3
     with:
       number-of-agents: 3
 ```
@@ -101,7 +101,7 @@ concurrency:
 jobs:
   main:
     name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.9
+    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11.3
     secrets:
       NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
       NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
@@ -109,7 +109,7 @@ jobs:
 
   agents:
     name: Nx Cloud - Agents
-    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.9
+    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.3
     secrets:
       NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
       NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
@@ -123,7 +123,14 @@ jobs:
 <!-- start configuration-options-for-the-main-job -->
 
 ```yaml
-- uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.9
+- uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11.3
+  # [OPTIONAL] Explicitly supported secret values which can be passed into the workflow from your outer workflow run.
+  #
+  # NOTE: You cannot access values from ${{ secrets }} beyond what is explicitly specified here because of the limitations of reusable Github workflows
+  secrets:
+    NPM_TOKEN: ""
+    NX_CLOUD_ACCESS_TOKEN: ""
+    NX_CLOUD_AUTH_TOKEN: ""
   with:
     # [OPTIONAL] The available number of agents used by the Nx Cloud to distribute tasks in parallel.
     # By default, NxCloud tries to infer dynamically how many agents you have available. Some agents
@@ -231,7 +238,14 @@ jobs:
 <!-- start configuration-options-for-agent-jobs -->
 
 ```yaml
-- uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.9
+- uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.3
+  # [OPTIONAL] Explicitly supported secret values which can be passed into the workflow from your outer workflow run.
+  #
+  # NOTE: You cannot access values from ${{ secrets }} beyond what is explicitly specified here because of the limitations of reusable Github workflows
+  secrets:
+    NPM_TOKEN: ""
+    NX_CLOUD_ACCESS_TOKEN: ""
+    NX_CLOUD_AUTH_TOKEN: ""
   with:
     # [REQUIRED] The number of agents which should be created as part of the workflow in order to
     # allow Nx Cloud to intelligently distribute tasks in parallel.
