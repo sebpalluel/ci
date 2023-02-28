@@ -93,6 +93,7 @@ jobs:
     # The name of the job which will invoke this one is expected to be "Nx Cloud - Main Job", and whatever we call this will be appended
     # to that one after a forward slash, so we keep this one intentionally short to produce "Nx Cloud - Main Job / Run" in the Github UI
     name: Run
+    timeout-minutes: 30 # Set the maximum time limit for the job to 30 minutes
     defaults:
       run:
         working-directory: ${{ inputs.working-directory || github.workspace }}

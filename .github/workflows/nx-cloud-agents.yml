@@ -65,10 +65,12 @@ jobs:
     runs-on: ${{ inputs.runs-on }}
     environment: ${{ inputs.environment }}
     name: Agent ${{ matrix.agent }}
+    timeout-minutes: 30 # Set the maximum time limit for the job to 30 minutes
     strategy:
+      fail-fast: true # Stop the matrix run as soon as one job fails
       matrix:
         agent:
-          - ${{fromJson(needs.set-agents.outputs.matrix)}}
+          - ${{ fromJson(needs.set-agents.outputs.matrix)}}
     steps:
       - uses: actions/checkout@v3
 
