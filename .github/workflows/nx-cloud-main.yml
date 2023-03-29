@@ -229,7 +229,7 @@ jobs:
             ${{ runner.os }}-node-${{ steps.versions.outputs.node_version }}-yarn-berry-
       
       - name: Install Cypress binary if no cache hit
-        if: steps.cache-cypress-binary.outputs.cache-hit != 'true'
+        if: steps.cache-cypress-binary.outputs.cache-hit != 'true' && steps.package_manager.outputs.name == 'pnpm'
         run: pnpm cypress install
 
       - name: Process environment-variables
