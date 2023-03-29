@@ -142,6 +142,18 @@ jobs:
           npm-version: "${{ inputs.npm-version }}"
           yarn-version: "${{ inputs.yarn-version }}"
 
+      # we use the exact restore key to avoid Cypress binary snowballing
+      # https://glebbahmutov.com/blog/do-not-let-cypress-cache-snowball/
+      # https://github.com/cypress-io/cypress-example-kitchensink/blob/0cf2a960fea4804271a9e5273d2ed8e246dd9e21/.github/workflows/parallel.yml#L1-L1
+      - name: Cache Cypress binary
+        uses: actions/cache@v3
+        id: cache-cypress-binary
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            cypress-${{ runner.os }}-cypress-
+
       # Install pnpm with exact version provided by consumer or fallback to latest
       - name: Install PNPM
         if: steps.package_manager.outputs.name == 'pnpm'
@@ -215,6 +227,10 @@ jobs:
           key: ${{ runner.os }}-node-${{ steps.versions.outputs.node_version }}-yarn-berry-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-node-${{ steps.versions.outputs.node_version }}-yarn-berry-
+      
+      - name: Install Cypress binary if no cache hit
+        if: steps.cache-cypress-binary.outputs.cache-hit != 'true'
+        run: pnpm cypress install
 
       - name: Process environment-variables
         if: ${{ inputs.environment-variables != '' }}
