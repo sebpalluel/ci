@@ -142,18 +142,6 @@ jobs:
           npm-version: "${{ inputs.npm-version }}"
           yarn-version: "${{ inputs.yarn-version }}"
 
-      # we use the exact restore key to avoid Cypress binary snowballing
-      # https://glebbahmutov.com/blog/do-not-let-cypress-cache-snowball/
-      # https://github.com/cypress-io/cypress-example-kitchensink/blob/0cf2a960fea4804271a9e5273d2ed8e246dd9e21/.github/workflows/parallel.yml#L1-L1
-      - name: Cache Cypress binary
-        uses: actions/cache@v3
-        id: cache-cypress-binary
-        with:
-          path: ~/.cache/Cypress
-          key: cypress-${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            cypress-${{ runner.os }}-cypress-
-
       # Install pnpm with exact version provided by consumer or fallback to latest
       - name: Install PNPM
         if: steps.package_manager.outputs.name == 'pnpm'
@@ -228,10 +216,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-${{ steps.versions.outputs.node_version }}-yarn-berry-
       
-      - name: Install Cypress binary if no cache hit
-        if: steps.cache-cypress-binary.outputs.cache-hit != 'true' && steps.package_manager.outputs.name == 'pnpm'
-        run: pnpm cypress install
-
+      
       - name: Process environment-variables
         if: ${{ inputs.environment-variables != '' }}
         uses: actions/github-script@v6
@@ -271,14 +256,17 @@ jobs:
               appendFileSync(process.env.GITHUB_ENV, `${v.name}=${parseStr(v.value)}\n`);
             }
 
-      - name: Cache Cypress Binary for pnpm
-        id: cache-cypress-binary
+      # we use the exact restore key to avoid Cypress binary snowballing
+      # https://glebbahmutov.com/blog/do-not-let-cypress-cache-snowball/
+      # https://github.com/cypress-io/cypress-example-kitchensink/blob/0cf2a960fea4804271a9e5273d2ed8e246dd9e21/.github/workflows/parallel.yml#L1-L1
+      - name: Cache Cypress binary for pnpm
         uses: actions/cache@v3
+        id: cache-cypress-binary
         with:
-          path: ${{ inputs.cypress_cache_path }}
-          key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: ${{ inputs.cypress_cache_path }} || ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+            cypress-${{ runner.os }}-cypress-
 
       - name: Run any configured install-commands
         if: ${{ inputs.install-commands != '' }}
@@ -303,6 +291,10 @@ jobs:
             echo "Running npm ci"
             npm ci
           fi
+
+      - name: Install Cypress binary if no cache hit
+        if: steps.cache-cypress-binary.outputs.cache-hit != 'true' && steps.package_manager.outputs.name == 'pnpm'
+        run: pnpm cypress install
 
       # An unfortunate side-effect of the way reusable workflows work is that by the time they are pulled into the "caller"
       # repo, they are effectively completely embedded in that context. This means that we cannot reference any files which
