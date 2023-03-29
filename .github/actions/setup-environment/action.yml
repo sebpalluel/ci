@@ -30,11 +30,10 @@ runs:
 
         echo "node_version=${node_ver:1}" >> $GITHUB_OUTPUT
 
-    - name: Get pnpm store directory
-      id: pnpm-cache
+    - name: Get pnpm cache directory path
       shell: bash
-      run: |
-        echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      id: pnpm-cache-dir-path
+      run: echo "dir=$(pnpm store path)" >> $GITHUB_OUTPUT
 
     - name: Use the node_modules cache if available [pnpm]
       id: cache-node-modules-pnpm
