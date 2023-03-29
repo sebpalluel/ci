@@ -18,20 +18,32 @@ runs:
         version: 7
         run_install: false
 
+    - name: Print node/pnpm versions
+      shell: bash
+      id: versions
+      run: |
+        node_ver=$( node --version )
+        pnpm_ver=$( pnpm --version || true )
+
+        echo "Node: ${node_ver:1}"
+        if [[ $pnpm_ver != '' ]]; then echo "PNPM: $pnpm_ver"; fi
+
+        echo "node_version=${node_ver:1}" >> $GITHUB_OUTPUT
+
     - name: Get pnpm store directory
       id: pnpm-cache
       shell: bash
       run: |
         echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
-    - uses: actions/cache@v3
-      name: Setup pnpm cache
-      id: cache-node-modules
+    - name: Use the node_modules cache if available [pnpm]
+      id: cache-node-modules-pnpm
+      uses: actions/cache@v3
       with:
-        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        path: ${{ steps.pnpm-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-node-${{ steps.versions.outputs.node_version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
         restore-keys: |
-          ${{ runner.os }}-pnpm-store-
+          ${{ runner.os }}-node-${{ steps.versions.outputs.node_version }}-
 
     - name: Cache Cypress binary
       uses: actions/cache@v3
