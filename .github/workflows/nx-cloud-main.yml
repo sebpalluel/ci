@@ -186,8 +186,7 @@ jobs:
           path: ${{ steps.pnpm-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-node-${{ steps.versions.outputs.node_version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
+            ${{ runner.os }}-node-${{ steps.versions.outputs.node_version }}-
 
       - name: Get yarn cache directory path [yarn 1.x]
         if: steps.package_manager.outputs.name == 'yarn' && startsWith(steps.versions.outputs.yarn_version, '1.')
