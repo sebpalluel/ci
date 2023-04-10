@@ -61,3 +61,23 @@ runs:
       shell: bash
       if: steps.cache-cypress-binary.outputs.cache-hit != 'true'
       run: pnpm cypress install
+
+    - name: Get Playwright browsers cache directory path
+      shell: bash
+      id: playwright-cache-dir-path
+      run: echo "dir=$(pnpm config get cache)/ms-playwright" >> $GITHUB_OUTPUT
+
+    - name: Cache Playwright browsers
+      id: cache-playwright-browsers
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.playwright-cache-dir-path.outputs.dir }}
+        key: playwright-browsers-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          playwright-browsers-${{ runner.os }}-
+
+    - name: Install Playwright browsers if no cache hit
+      shell: bash
+      if: steps.cache-playwright-browsers.outputs.cache-hit != 'true'
+      run: pnpm playwright install
+
