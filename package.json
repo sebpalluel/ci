@@ -1,5 +1,10 @@
 {
   "private": true,
   "version": "0.11.1",
-  "description": "This package.json is here purely to control the version of the Action, in combination with https://github.com/JamesHenry/publish-shell-action"
+  "description": "This package.json is here purely to control the version of the Action, in combination with https://github.com/JamesHenry/publish-shell-action",
+  "scripts": {
+    "latest": "git tag -f latest && git push origin --tags --force",
+    "build": "tsc",
+    "test": "npm run build && node ./out/test/runTest.js"
+  }
 }

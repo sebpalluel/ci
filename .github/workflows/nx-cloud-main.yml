@@ -88,6 +88,7 @@ env:
   NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
   ENV_FILE: ${{ secrets.ENV_FILE }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  NODE_OPTIONS: '--max_old_space_size=4096'
 
 jobs:
   main:
