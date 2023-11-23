@@ -27,10 +27,6 @@ on:
       environment-variables:
         required: false
         type: string
-      cypress_cache_path:
-        required: false
-        default: cypress/cache
-        type: string
       init-commands:
         required: false
         type: string
@@ -257,18 +253,6 @@ jobs:
               appendFileSync(process.env.GITHUB_ENV, `${v.name}=${parseStr(v.value)}\n`);
             }
 
-      # we use the exact restore key to avoid Cypress binary snowballing
-      # https://glebbahmutov.com/blog/do-not-let-cypress-cache-snowball/
-      # https://github.com/cypress-io/cypress-example-kitchensink/blob/0cf2a960fea4804271a9e5273d2ed8e246dd9e21/.github/workflows/parallel.yml#L1-L1
-      - name: Cache Cypress binary for pnpm
-        uses: actions/cache@v3
-        id: cache-cypress-binary
-        with:
-          path: ${{ inputs.cypress_cache_path }} || ~/.cache/Cypress
-          key: cypress-${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            cypress-${{ runner.os }}-cypress-
-
       - name: Run any configured install-commands
         if: ${{ inputs.install-commands != '' }}
         run: |
@@ -292,11 +276,25 @@ jobs:
             echo "Running npm ci"
             npm ci
           fi
+      - name: Get Playwright browsers cache directory path
+        shell: bash
+        id: playwright-cache-dir-path
+        run: echo "dir=$(pnpm config get cache)/ms-playwright" >> $GITHUB_OUTPUT
+  
+      - name: Cache Playwright browsers
+        id: cache-playwright-browsers
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.playwright-cache-dir-path.outputs.dir }}
+          key: playwright-browsers-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            playwright-browsers-${{ runner.os }}-
 
-      - name: Install Cypress binary if no cache hit
-        if: steps.cache-cypress-binary.outputs.cache-hit != 'true' && steps.package_manager.outputs.name == 'pnpm'
-        run: pnpm cypress install
-
+      - name: Install Playwright browsers if no cache hit
+        shell: bash
+        if: steps.cache-playwright-browsers.outputs.cache-hit != 'true'
+        run: pnpx playwright install --with-deps chromium
+  
       # An unfortunate side-effect of the way reusable workflows work is that by the time they are pulled into the "caller"
       # repo, they are effectively completely embedded in that context. This means that we cannot reference any files which
       # are local to this repo which defines the workflow, and we therefore need to work around this by embedding the contents

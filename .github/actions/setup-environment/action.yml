@@ -44,23 +44,9 @@ runs:
         restore-keys: |
           ${{ runner.os }}-node-${{ steps.versions.outputs.node_version }}-
 
-    - name: Cache Cypress binary
-      uses: actions/cache@v3
-      id: cache-cypress-binary
-      with:
-        path: ~/.cache/Cypress
-        key: cypress-${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          cypress-${{ runner.os }}-cypress-
-
     - name: Install dependencies
       shell: bash
       run: pnpm install
-
-    - name: Install Cypress binary if no cache hit
-      shell: bash
-      if: steps.cache-cypress-binary.outputs.cache-hit != 'true'
-      run: pnpm cypress install
 
     - name: Get Playwright browsers cache directory path
       shell: bash
