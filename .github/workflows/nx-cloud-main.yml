@@ -276,16 +276,12 @@ jobs:
             echo "Running npm ci"
             npm ci
           fi
-      - name: Get Playwright browsers cache directory path
-        shell: bash
-        id: playwright-cache-dir-path
-        run: echo "dir=$(pnpm config get cache)/ms-playwright" >> $GITHUB_OUTPUT
-  
+        
       - name: Cache Playwright browsers
         id: cache-playwright-browsers
         uses: actions/cache@v3
         with:
-          path: ${{ steps.playwright-cache-dir-path.outputs.dir }}
+          path: ~/.cache/ms-playwright
           key: playwright-browsers-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             playwright-browsers-${{ runner.os }}-
